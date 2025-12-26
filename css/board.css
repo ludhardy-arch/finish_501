@@ -5,4 +5,10 @@ canvas {
     0 0 300px rgba(0,255,200,0.18),
     inset 0 0 30px rgba(0,0,0,0.8);
   margin-bottom: 20px;
+
+  pointer-events: auto; /* le canvas reste cliquable */
+}
+canvas::before,
+canvas::after {
+  pointer-events: none;
 }
