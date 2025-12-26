@@ -13,65 +13,65 @@
 
 <div id="app">
 
+  <!-- SCORE GLOBAL -->
   <div id="globalScore">0%</div>
 
+  <!-- ACTIONS SECONDAIRES -->
   <div class="actionBar">
-	<button id="undoBtn">RETOUR</button>
+    <button id="undoBtn">RETOUR</button>
     <button id="resetBtn">RESET</button>
   </div>
 
+  <!-- SCORE À FINIR -->
   <div id="targetScore">Finish : —</div>
 
+  <!-- CIBLE -->
   <canvas id="dartboard" width="700" height="700"></canvas>
+
+  <!-- BOUTON PRINCIPAL -->
   <div id="mainActionWrapper">
-  <button id="mainActionBtn" class="go">GO</button>
-</div>
+    <button id="mainActionBtn" class="go">GO</button>
+  </div>
 
-
+  <!-- DIFFICULTÉ + FLÈCHES -->
   <div class="slotsRow">
 
-  <div id="difficultyWrapper">
-    <select id="difficulty">
-      <option value="10">Débutant (10s)</option>
-      <option value="7">Confirmé (7s)</option>
-      <option value="5">Expert (5s)</option>
-      <option value="3">THE NUKE (3s)</option>
-    </select>
+    <!-- DIFFICULTÉ (UNIQUE) -->
+    <div id="difficultyWrapper">
+      <select id="difficulty">
+        <option value="10">Débutant (10s)</option>
+        <option value="7">Confirmé (7s)</option>
+        <option value="5">Expert (5s)</option>
+        <option value="3">THE NUKE (3s)</option>
+      </select>
+    </div>
+
+    <!-- SLOTS FLÈCHES -->
+    <div id="arrowSlots">
+      <div class="slot"></div>
+      <div class="slot"></div>
+      <div class="slot"></div>
+    </div>
+
   </div>
 
-  <div id="arrowSlots">
-    <div class="slot"></div>
-    <div class="slot"></div>
-    <div class="slot"></div>
+  <!-- ROUTE STANDARD -->
+  <div id="standardRoute"></div>
+
+  <!-- SÉLECTION DES NIVEAUX -->
+  <div class="levels">
+    <button class="levelBtn active" data-min="2" data-max="20">2–20</button>
+    <button class="levelBtn active" data-min="21" data-max="40">21–40</button>
+    <button class="levelBtn" data-min="41" data-max="60">41–60</button>
+    <button class="levelBtn" data-min="61" data-max="80">61–80</button>
+    <button class="levelBtn" data-min="81" data-max="100">81–100</button>
+    <button class="levelBtn" data-min="101" data-max="120">101–120</button>
+    <button class="levelBtn" data-min="121" data-max="140">121–140</button>
+    <button class="levelBtn" data-min="141" data-max="160">141–160</button>
+    <button class="levelBtn" data-min="161" data-max="170">161–170</button>
   </div>
 
 </div>
-
-<div id="standardRoute"></div>
-
-
-<div class="levels">
-  <button class="levelBtn active" data-min="2" data-max="20">2–20</button>
-  <button class="levelBtn active" data-min="21" data-max="40">21–40</button>
-  <button class="levelBtn" data-min="41" data-max="60">41–60</button>
-  <button class="levelBtn" data-min="61" data-max="80">61–80</button>
-  <button class="levelBtn" data-min="81" data-max="100">81–100</button>
-  <button class="levelBtn" data-min="101" data-max="120">101–120</button>
-  <button class="levelBtn" data-min="121" data-max="140">121–140</button>
-  <button class="levelBtn" data-min="141" data-max="160">141–160</button>
-  <button class="levelBtn" data-min="161" data-max="170">161–170</button>
-</div>
-
-
-<div id="difficultyWrapper">
-  <select id="difficulty">
-    <option value="10">Débutant (10s)</option>
-    <option value="7">Confirmé (7s)</option>
-    <option value="5">Expert (5s)</option>
-    <option value="3">THE NUKE (3s)</option>
-  </select>
-</div>
-
 
 <script type="module" src="js/app.js"></script>
 </body>
