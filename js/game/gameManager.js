@@ -21,22 +21,19 @@ export function startGame() {
   darts = [];
   locked = false;
   gameRunning = true;
+  
+  // éteindre les highlights de la route précédente
+window.dispatchEvent(
+  new CustomEvent('standardRoute', { detail: { route: [] } })
+);
 
-  // éteindre les highlights précédents
-  window.dispatchEvent(
-    new CustomEvent('standardRoute', { detail: { route: [] } })
-  );
 
   target = getRandomTarget();
   document.getElementById('targetScore').textContent = `Finish : ${target}`;
 
   stats.rounds++;
-
   const diff = Number(document.getElementById('difficulty').value);
   stats.difficulty[diff].rounds++;
-
-  const lvl = getLevelFromTarget(target);
-  stats.levels[lvl].rounds++; // ✅ FIX stats niveaux
 
   saveStats(stats);
 
@@ -65,11 +62,12 @@ export function resetGame() {
   document.getElementById('targetScore').textContent = 'Finish : —';
   document.getElementById('standardRoute').textContent = '';
 
-  // reset TOTAL des stats
+  // reset TOTAL des stats (session + mémoire)
   resetStats();
   stats = loadStats();
   updateScore(stats.wins, stats.rounds);
 
+  // éteindre les highlights sur la cible
   window.dispatchEvent(
     new CustomEvent('standardRoute', { detail: { route: [] } })
   );
@@ -127,9 +125,11 @@ function finishRound() {
   saveStats(stats);
 
   const standardRoute = getStandardRoute();
+
   validateSlots(success, standardRoute);
   updateScore(stats.wins, stats.rounds);
 
+  // 🔥 allumer la route standard sur la cible
   window.dispatchEvent(
     new CustomEvent('standardRoute', {
       detail: { route: getCpuRoute(target) || [] }
@@ -156,7 +156,7 @@ function getRandomTarget() {
   const active = [...document.querySelectorAll('.levelBtn.active')];
 
   if (active.length === 0) {
-    console.warn('Aucun niveau sélectionné, fallback à 40');
+    alert('Sélectionne au moins un niveau');
     return 40;
   }
 
@@ -190,12 +190,11 @@ function getLevelFromTarget(t) {
   return 9;
 }
 
-// =====================
-// UNDO
-// =====================
 export function undoLastDart() {
   if (locked || darts.length === 0) return;
 
   darts.pop();
   setSlots(darts);
 }
+
+
