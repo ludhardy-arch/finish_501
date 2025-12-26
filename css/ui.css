@@ -44,19 +44,6 @@
 }
 
 /* =====================
-   FINISH A TERMINER
-   ===================== */
-#targetScore {
-  font-size: 44px;
-  font-weight: 900;
-  margin: 14px 0 20px;
-  color: #ffffff;
-  text-shadow:
-    0 0 14px #0396FF,
-    0 0 30px rgba(0,255,200,0.6);
-}
-
-/* =====================
    ROUTE STANDARD
    ===================== */
 #standardRoute {
@@ -100,7 +87,7 @@
 .slotsZone {
   position: relative;
   display: flex;
-  justify-content: center; /* 🔥 centre les SLOTS */
+  justify-content: center;
   align-items: center;
   margin-top: 18px;
 }
@@ -135,17 +122,17 @@
 }
 
 /* =====================
-   SELECT DIFFICULTÉ (À GAUCHE)
+   SELECT DIFFICULTÉ (À GAUCHE DES SLOTS)
    ===================== */
 #difficultyWrapper {
   position: absolute;
-  right: 50%;                  /* se cale sur le centre */
+  right: 50%;
   transform: translateX(-190px);
 }
 
 #difficulty {
   height: 48px;
-  line-height: 48px;     /* ✅ centre le texte verticalement */
+  line-height: 48px;
   background: radial-gradient(circle at top, #202020, #050505);
   color: #002FFF;
   border: 2px solid #4CFCF9;
@@ -178,18 +165,15 @@
 }
 
 /* =====================
-   BOUTON PRINCIPAL GO
+   🔴 BOUTON PRINCIPAL GO / FINISH
    ===================== */
-#mainActionWrapper {
-  position: relative;
-  width: 50px;
+#mainActionZone {
+  display: flex;
+  justify-content: center;
+  margin: 12px 0 8px;
 }
 
 #mainActionBtn {
-  position: absolute;
-  right: -340px;
-  bottom: -100px;
-
   width: 180px;
   height: 180px;
   border-radius: 50%;
@@ -214,7 +198,7 @@
   line-height: 1;
   padding: 0;
 
-  transition: transform 0.08s ease, box-shadow 0.08s ease;
+  transition: transform 0.08s ease;
 }
 
 #mainActionBtn:active {
