@@ -13,6 +13,9 @@ let darts = [];
 let locked = true;
 let gameRunning = false;
 
+// bouton principal (réutilisé)
+const mainBtn = document.getElementById('mainActionBtn');
+
 // =====================
 // LANCER UN ROUND
 // =====================
@@ -21,22 +24,26 @@ export function startGame() {
   darts = [];
   locked = false;
   gameRunning = true;
-  
+
   // éteindre les highlights de la route précédente
-window.dispatchEvent(
-  new CustomEvent('standardRoute', { detail: { route: [] } })
-);
+  window.dispatchEvent(
+    new CustomEvent('standardRoute', { detail: { route: [] } })
+  );
 
-
+  // tirage du finish
   target = getRandomTarget();
-  document.getElementById('targetScore').textContent = `Finish : ${target}`;
 
+  // 🔴 affichage du finish DANS le bouton
+  mainBtn.textContent = `Finish ${target}`;
+
+  // stats
   stats.rounds++;
   const diff = Number(document.getElementById('difficulty').value);
   stats.difficulty[diff].rounds++;
 
   saveStats(stats);
 
+  // timer
   startTimer(diff, onTimeUp);
 }
 
@@ -59,7 +66,10 @@ export function resetGame() {
   locked = true;
   gameRunning = false;
 
-  document.getElementById('targetScore').textContent = 'Finish : —';
+  // remise du bouton à l'état GO
+  mainBtn.textContent = 'GO';
+
+  // nettoyage UI
   document.getElementById('standardRoute').textContent = '';
 
   // reset TOTAL des stats (session + mémoire)
@@ -190,11 +200,12 @@ function getLevelFromTarget(t) {
   return 9;
 }
 
+// =====================
+// ANNULER DERNIÈRE FLÈCHE
+// =====================
 export function undoLastDart() {
   if (locked || darts.length === 0) return;
 
   darts.pop();
   setSlots(darts);
 }
-
-
