@@ -1,3 +1,7 @@
+/* =====================
+   BASE GLOBALE
+   ===================== */
+
 body {
   margin: 0;
   background: radial-gradient(circle at top, #0b1025, #02040a);
@@ -12,11 +16,9 @@ body {
   padding: 20px;
 }
 
-.controls {
-  display: flex;
-  gap: 12px;
-  margin-bottom: 15px;
-}
+/* =====================
+   ÉLÉMENTS GLOBAUX
+   ===================== */
 
 button {
   background: #00ffc8;
@@ -34,6 +36,10 @@ select {
   border-radius: 10px;
   padding: 6px;
 }
+
+/* =====================
+   SCORE GLOBAL
+   ===================== */
 
 #globalScore {
   font-size: 64px;
