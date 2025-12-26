@@ -204,3 +204,7 @@
 #mainActionBtn:active {
   transform: translateY(4px);
 }
+/* 🔒 SÉCURITÉ : le bouton ne doit JAMAIS être en absolute */
+#mainActionBtn {
+  position: static !important;
+}
