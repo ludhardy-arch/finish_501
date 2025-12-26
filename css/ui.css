@@ -89,6 +89,8 @@
   gap: 20px;
   justify-content: center;
   margin-top: 15px;
+
+  position: relative; /* 🔥 TRÈS IMPORTANT */
 }
 
 .slot {
@@ -214,10 +216,11 @@
 }
 #difficultyWrapper {
   position: absolute;
-  left: 410px;
+  right: calc(100% + 20px); /* ⬅ à gauche des cases */
   top: 50%;
   transform: translateY(-50%);
 }
+
 #difficulty {
   background: radial-gradient(circle at top, #202020, #050505);
   color: #002FFF;
