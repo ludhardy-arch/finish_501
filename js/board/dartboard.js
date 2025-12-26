@@ -45,32 +45,26 @@ export function drawBoard(canvas) {
 }
 
 function resizeCanvas() {
+  const cssSize = Math.min(
+    window.innerWidth * 0.9,
+    700
+  );
+
   const dpr = window.devicePixelRatio || 1;
 
-  // marge de sécurité (UI autour)
-  const margin = 24;
+  // taille CSS
+  CANVAS.style.width  = cssSize + 'px';
+  CANVAS.style.height = cssSize + 'px';
 
-  // taille max autorisée par l'écran
-  const maxSize = Math.min(
-    window.innerWidth,
-    window.innerHeight
-  ) - margin * 2;
-
-  // taille finale (limitée aussi à 700 desktop)
-  const cssSize = Math.min(maxSize, 700);
-
-  // taille affichée
-  CANVAS.style.width = `${cssSize}px`;
-  CANVAS.style.height = `${cssSize}px`;
-
-  // taille réelle du canvas (retina-safe)
+  // taille réelle
   CANVAS.width  = Math.round(cssSize * dpr);
   CANVAS.height = Math.round(cssSize * dpr);
 
-  // normalisation du contexte
-  CTX.setTransform(dpr, 0, 0, dpr, 0, 0);
+  // RESET TOTAL du contexte
+  CTX.setTransform(1, 0, 0, 1, 0, 0);
+  CTX.scale(dpr, dpr);
 
-  // coordonnées logiques
+  // 🔥 TOUT LE JEU BOSSE EN CSS PX
   CX = cssSize / 2;
   CY = cssSize / 2;
   R  = cssSize * 0.45;
@@ -80,6 +74,8 @@ function resizeCanvas() {
 
   render();
 }
+
+
 
 
 
@@ -147,28 +143,25 @@ function render() {
 // ===== CHIFFRES =====
 ctx.fillStyle = '#fff';
 
-// rayon réel de la cible (double extérieur)
-const boardRadius = R;
-
-// zone dédiée aux chiffres (automatique, proportionnelle)
-const numberZone = boardRadius * 0.07;
-
-// rayon exact des chiffres
-const numberRadius = boardRadius + numberZone;
-
-// taille des chiffres directement liée au rayon
-const fontSize = boardRadius * 0.05;
+// taille proportionnelle réelle
+const fontSize = R * 0.045;
 ctx.font = `bold ${fontSize}px system-ui`;
 
 ctx.textAlign = 'center';
 ctx.textBaseline = 'middle';
 
+// rayon basé EXACTEMENT sur la cible
+const numberRadius = R * 1.07;
+
 for (let i = 0; i < 20; i++) {
   const a = START + (i + 0.5) * SLICE;
-  const x = CX + Math.cos(a) * numberRadius;
-  const y = CY + Math.sin(a) * numberRadius;
-  ctx.fillText(ORDER[i], x, y);
+  ctx.fillText(
+    ORDER[i],
+    CX + Math.cos(a) * numberRadius,
+    CY + Math.sin(a) * numberRadius
+  );
 }
+
 
 } // 🔥 FIN DE render()
 
