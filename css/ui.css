@@ -145,11 +145,12 @@
 
 #difficulty {
   height: 48px;
+  line-height: 48px;     /* ✅ centre le texte verticalement */
   background: radial-gradient(circle at top, #202020, #050505);
   color: #002FFF;
   border: 2px solid #4CFCF9;
   border-radius: 18px;
-  padding: 14px 22px;
+  padding: 0 22px;
   font-size: 18px;
   font-weight: 900;
   text-transform: uppercase;
