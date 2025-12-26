@@ -216,3 +216,13 @@
   width: 90px;
   height: 90px;
 }
+/* 🔥 FIX CRITIQUE : le canvas ne doit jamais recouvrir l’UI */
+#dartboard {
+  position: relative;
+  z-index: 1;
+}
+
+.slotsZone {
+  position: relative;
+  z-index: 5;
+}
