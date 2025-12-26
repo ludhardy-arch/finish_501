@@ -203,3 +203,16 @@
 #mainActionBtn {
   position: static !important;
 }
+
+/* 🚑 HOTFIX PROD — RESTAURE LES SLOTS */
+#arrowSlots {
+  display: flex !important;
+  gap: 20px;
+  height: 90px;              /* 🔥 force la hauteur */
+}
+
+.slot {
+  display: flex !important;
+  width: 90px;
+  height: 90px;
+}
