@@ -34,7 +34,7 @@ export function startGame() {
   target = getRandomTarget();
 
   // 🔴 affichage du finish DANS le bouton
-  mainBtn.textContent = `Finish ${target}`;
+  mainBtn.textContent = target;
 
   // stats
   stats.rounds++;
