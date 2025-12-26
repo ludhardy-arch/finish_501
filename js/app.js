@@ -45,9 +45,10 @@ function setGoMode() {
 
 function setValidateMode() {
   mode = 'VALIDATE';
-  mainBtn.textContent = 'VALIDER';
+  // ❌ on ne change PLUS le texte ici
   mainBtn.classList.add('validate');
 }
+
 
 // =====================
 // ACTIONS SECONDAIRES
