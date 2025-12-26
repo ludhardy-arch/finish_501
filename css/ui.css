@@ -124,16 +124,6 @@
     0 0 18px rgba(0,255,136,0.6);
 }
 
-
-/* =====================
-   SELECT DIFFICULTÉ (À GAUCHE DES SLOTS)
-   ===================== */
-#difficultyWrapper {
-  position: absolute;
-  right: 50%;
-  transform: translateX(-190px);
-}
-
 #difficulty {
   height: 48px;
   line-height: 48px;
