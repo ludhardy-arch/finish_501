@@ -54,7 +54,6 @@ function getRandomTarget() {
   return target;
 }
 
-
 // =====================
 // VALIDATION MANUELLE
 // =====================
