@@ -25,7 +25,7 @@ const RINGS = {
 };
 
 // =====================
-// ÉTAT INTERNE
+// ÉTAT
 // =====================
 let CANVAS, CTX;
 let CX, CY, R, SLICE, START;
@@ -44,27 +44,21 @@ export function drawBoard(canvas) {
   canvas.onclick = onClickBoard;
 }
 
+// =====================
+// CANVAS RESPONSIVE + RETINA
+// =====================
 function resizeCanvas() {
-  const cssSize = Math.min(
-    window.innerWidth * 0.9,
-    700
-  );
-
+  const cssSize = Math.min(window.innerWidth * 0.9, 700);
   const dpr = window.devicePixelRatio || 1;
 
-  // taille CSS
-  CANVAS.style.width  = cssSize + 'px';
+  CANVAS.style.width = cssSize + 'px';
   CANVAS.style.height = cssSize + 'px';
 
-  // taille réelle
-  CANVAS.width  = Math.round(cssSize * dpr);
-  CANVAS.height = Math.round(cssSize * dpr);
+  CANVAS.width = cssSize * dpr;
+  CANVAS.height = cssSize * dpr;
 
-  // RESET TOTAL du contexte
-  CTX.setTransform(1, 0, 0, 1, 0, 0);
-  CTX.scale(dpr, dpr);
+  CTX.setTransform(dpr, 0, 0, dpr, 0, 0);
 
-  // 🔥 TOUT LE JEU BOSSE EN CSS PX
   CX = cssSize / 2;
   CY = cssSize / 2;
   R  = cssSize * 0.45;
@@ -75,12 +69,16 @@ function resizeCanvas() {
   render();
 }
 
-
-
-
+function cssCanvasSize() {
+  const dpr = window.devicePixelRatio || 1;
+  return {
+    w: CANVAS.width / dpr,
+    h: CANVAS.height / dpr
+  };
+}
 
 // =====================
-// ROUTE STANDARD (HIGHLIGHT)
+// ROUTE STANDARD
 // =====================
 export function setRouteHighlights(route) {
   HIGHLIGHTS = Array.isArray(route) ? route : [];
@@ -88,11 +86,13 @@ export function setRouteHighlights(route) {
 }
 
 // =====================
-// RENDER GLOBAL
+// RENDER
 // =====================
 function render() {
   const ctx = CTX;
-  ctx.clearRect(0, 0, CANVAS.width, CANVAS.height);
+  const { w, h } = cssCanvasSize();
+
+  ctx.clearRect(0, 0, w, h);
 
   // ===== SECTEURS =====
   for (let i = 0; i < 20; i++) {
@@ -116,7 +116,6 @@ function render() {
   circle(ctx, CX, CY, R * RINGS.bullOuter, COLORS.green);
   circle(ctx, CX, CY, R * RINGS.bullInner, COLORS.red);
 
-  // ===== SISAL + OMBRE =====
   drawSisal(ctx, CX, CY, R);
   drawInnerShadow(ctx, CX, CY, R);
 
@@ -126,54 +125,36 @@ function render() {
   for (let i = 0; i < 20; i++) {
     const a = START + i * SLICE;
     ctx.beginPath();
-    ctx.moveTo(
-      CX + Math.cos(a) * R * RINGS.bullOuter,
-      CY + Math.sin(a) * R * RINGS.bullOuter
-    );
-    ctx.lineTo(
-      CX + Math.cos(a) * R,
-      CY + Math.sin(a) * R
-    );
+    ctx.moveTo(CX + Math.cos(a) * R * RINGS.bullOuter,
+               CY + Math.sin(a) * R * RINGS.bullOuter);
+    ctx.lineTo(CX + Math.cos(a) * R,
+               CY + Math.sin(a) * R);
     ctx.stroke();
   }
 
-  // ===== HIGHLIGHTS =====
   drawHighlights(ctx);
 
-// ===== CHIFFRES =====
-ctx.fillStyle = '#fff';
+  // ===== CHIFFRES (100% PROPORTIONNELS) =====
+  ctx.fillStyle = '#fff';
+  ctx.font = `bold ${R * 0.085}px system-ui`;
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'middle';
 
-// taille proportionnelle réelle
-const fontSize = R * 0.045;
-ctx.font = `bold ${fontSize}px system-ui`;
-
-ctx.textAlign = 'center';
-ctx.textBaseline = 'middle';
-
-// rayon basé EXACTEMENT sur la cible
-const numberRadius = R * 1.07;
-
-for (let i = 0; i < 20; i++) {
-  const a = START + (i + 0.5) * SLICE;
-  ctx.fillText(
-    ORDER[i],
-    CX + Math.cos(a) * numberRadius,
-    CY + Math.sin(a) * numberRadius
-  );
+  for (let i = 0; i < 20; i++) {
+    const a = START + (i + 0.5) * SLICE;
+    ctx.fillText(
+      ORDER[i],
+      CX + Math.cos(a) * R * 1.08,
+      CY + Math.sin(a) * R * 1.08
+    );
+  }
 }
 
-
-} // 🔥 FIN DE render()
-
-
 // =====================
-// HIGHLIGHTS BLEU NÉON
+// HIGHLIGHTS (ANTI-BAVE)
 // =====================
 function drawHighlights(ctx) {
   if (!HIGHLIGHTS.length) return;
-
-  ctx.save();
-  ctx.globalCompositeOperation = 'source-over';
 
   HIGHLIGHTS.forEach((hit, idx) => {
     const alpha = idx === 0 ? 0.9 : idx === 1 ? 0.7 : 0.55;
@@ -223,14 +204,14 @@ function drawHighlights(ctx) {
       );
     }
   });
-
-  ctx.restore();
 }
 
 // =====================
-// GLOW HELPERS
+// GLOW HELPERS (CLIP TOTAL)
 // =====================
 function glowSector(ctx, cx, cy, rIn, rOut, a0, a1, alpha) {
+  const { w, h } = cssCanvasSize();
+
   ctx.save();
   ctx.beginPath();
   ctx.arc(cx, cy, rOut, a0, a1);
@@ -239,22 +220,25 @@ function glowSector(ctx, cx, cy, rIn, rOut, a0, a1, alpha) {
 
   ctx.save();
   ctx.clip();
+
   ctx.globalAlpha = 0.85 * alpha;
   ctx.fillStyle = `${HIGHLIGHT_BLUE}1)`;
-  ctx.fillRect(0, 0, CANVAS.width, CANVAS.height);
-  ctx.restore();
+  ctx.fillRect(0, 0, w, h);
 
   ctx.globalAlpha = alpha;
-  ctx.shadowBlur = 22;
+  ctx.shadowBlur = 16;
   ctx.shadowColor = `${HIGHLIGHT_BLUE}1)`;
   ctx.lineWidth = 3;
   ctx.strokeStyle = `${HIGHLIGHT_BLUE}1)`;
   ctx.stroke();
 
   ctx.restore();
+  ctx.restore();
 }
 
 function glowRing(ctx, cx, cy, rIn, rOut, alpha) {
+  const { w, h } = cssCanvasSize();
+
   ctx.save();
   ctx.beginPath();
   ctx.arc(cx, cy, rOut, 0, Math.PI * 2);
@@ -263,22 +247,25 @@ function glowRing(ctx, cx, cy, rIn, rOut, alpha) {
 
   ctx.save();
   ctx.clip();
+
   ctx.globalAlpha = 0.85 * alpha;
   ctx.fillStyle = `${HIGHLIGHT_BLUE}1)`;
-  ctx.fillRect(0, 0, CANVAS.width, CANVAS.height);
-  ctx.restore();
+  ctx.fillRect(0, 0, w, h);
 
   ctx.globalAlpha = alpha;
-  ctx.shadowBlur = 22;
+  ctx.shadowBlur = 16;
   ctx.shadowColor = `${HIGHLIGHT_BLUE}1)`;
   ctx.lineWidth = 3;
   ctx.strokeStyle = `${HIGHLIGHT_BLUE}1)`;
   ctx.stroke();
 
   ctx.restore();
+  ctx.restore();
 }
 
 function glowCircle(ctx, cx, cy, r, alpha) {
+  const { w, h } = cssCanvasSize();
+
   ctx.save();
   ctx.beginPath();
   ctx.arc(cx, cy, r, 0, Math.PI * 2);
@@ -286,30 +273,30 @@ function glowCircle(ctx, cx, cy, r, alpha) {
 
   ctx.save();
   ctx.clip();
+
   ctx.globalAlpha = 0.9 * alpha;
   ctx.fillStyle = `${HIGHLIGHT_BLUE}1)`;
-  ctx.fillRect(0, 0, CANVAS.width, CANVAS.height);
-  ctx.restore();
+  ctx.fillRect(0, 0, w, h);
 
   ctx.globalAlpha = alpha;
-  ctx.shadowBlur = 30;
+  ctx.shadowBlur = 18;
   ctx.shadowColor = `${HIGHLIGHT_BLUE}1)`;
   ctx.lineWidth = 3;
   ctx.strokeStyle = `${HIGHLIGHT_BLUE}1)`;
   ctx.stroke();
 
   ctx.restore();
+  ctx.restore();
 }
 
 // =====================
-// CLIC SUR LA CIBLE
+// CLICK
 // =====================
 function onClickBoard(e) {
   const rect = CANVAS.getBoundingClientRect();
   const x = e.clientX - rect.left - CX;
   const y = e.clientY - rect.top - CY;
   const dist = Math.hypot(x, y);
-
   if (dist > R) return;
 
   const angle =
@@ -333,7 +320,7 @@ function onClickBoard(e) {
 }
 
 // =====================
-// BASE HELPERS
+// HELPERS
 // =====================
 function drawSector(ctx, cx, cy, rIn, rOut, a0, a1, color) {
   ctx.beginPath();
@@ -354,8 +341,7 @@ function circle(ctx, cx, cy, r, color) {
 function drawSisal(ctx, cx, cy, r) {
   ctx.save();
   ctx.globalAlpha = 0.08;
-  const density = 0.15;
-  for (let i = 0; i < r * r * density; i++) {
+  for (let i = 0; i < r * r * 0.15; i++) {
     const a = Math.random() * Math.PI * 2;
     const rr = Math.random() * r;
     ctx.fillStyle = Math.random() > 0.5 ? '#000' : '#fff';
@@ -365,11 +351,11 @@ function drawSisal(ctx, cx, cy, r) {
 }
 
 function drawInnerShadow(ctx, cx, cy, r) {
-  const grad = ctx.createRadialGradient(cx, cy, r * 0.7, cx, cy, r);
-  grad.addColorStop(0, 'rgba(0,0,0,0)');
-  grad.addColorStop(1, 'rgba(0,0,0,0.35)');
+  const g = ctx.createRadialGradient(cx, cy, r * 0.7, cx, cy, r);
+  g.addColorStop(0, 'rgba(0,0,0,0)');
+  g.addColorStop(1, 'rgba(0,0,0,0.35)');
   ctx.beginPath();
   ctx.arc(cx, cy, r, 0, Math.PI * 2);
-  ctx.fillStyle = grad;
+  ctx.fillStyle = g;
   ctx.fill();
 }
