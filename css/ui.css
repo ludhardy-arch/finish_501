@@ -27,10 +27,8 @@
 }
 
 .levels {
-  display: flex;
-  gap: 10px;
-  justify-content: center;
-  flex-wrap: wrap;
+  position: relative;
+  z-index: 20;
 }
 
 .levelBtn {
@@ -256,6 +254,15 @@
     inset 0 3px 6px rgba(255,255,255,0.15),
     inset 0 -4px 4px rgba(0,0,0,0.6),
     0 0 16px rgba(0,200,255,0.9);
+}
+/* Empêche le wrapper du bouton rouge de bloquer les clics ailleurs */
+#mainActionWrapper {
+  pointer-events: none;
+}
+
+/* Seul le bouton rouge reste cliquable */
+#mainActionBtn {
+  pointer-events: auto;
 }
 
 
