@@ -13,7 +13,7 @@ const canvas = document.getElementById('dartboard');
 drawBoard(canvas);
 
 // =====================
-// BOUTON PRINCIPAL (UI ONLY)
+// BOUTON PRINCIPAL
 // =====================
 const mainBtn = document.getElementById('mainActionBtn');
 let mode = 'GO';
@@ -22,16 +22,13 @@ mainBtn.addEventListener('click', () => {
   if (mode === 'GO') {
     startGame();
     setValidateMode();
-  } else if (mode === 'VALIDATE') {
+  } else {
     validateEarly();
-    forceGoMode();
+    setGoMode();
   }
 });
 
-// =====================
-// MODES UI
-// =====================
-function forceGoMode() {
+function setGoMode() {
   mode = 'GO';
   mainBtn.textContent = 'GO';
   mainBtn.classList.remove('validate');
@@ -47,10 +44,9 @@ function setValidateMode() {
 // ACTIONS SECONDAIRES
 // =====================
 document.getElementById('undoBtn').addEventListener('click', undoLastDart);
-
 document.getElementById('resetBtn').addEventListener('click', () => {
   resetGame();
-  forceGoMode();
+  setGoMode();
 });
 
 // =====================
@@ -60,6 +56,6 @@ window.addEventListener('standardRoute', (e) => {
   const route = e.detail?.route || [];
   setRouteHighlights(route);
 
-  // 🔒 quoi qu’il arrive, retour UI en mode GO
-  forceGoMode();
+  // auto retour en mode GO après fin de round
+  setGoMode();
 });
