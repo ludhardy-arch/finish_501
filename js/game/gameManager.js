@@ -5,6 +5,11 @@ import { getCpuRoute } from './cpuManager.js';
 import { loadStats, saveStats, resetStats } from '../utils/storage.js';
 
 // =====================
+// CONSTANTES
+// =====================
+const IMPOSSIBLE_FINISHES = [169, 168, 166, 165, 163, 162];
+
+// =====================
 // ÉTAT DU JEU
 // =====================
 let stats = loadStats();
@@ -13,7 +18,6 @@ let darts = [];
 let locked = true;
 let gameRunning = false;
 
-// bouton principal (réutilisé)
 const mainBtn = document.getElementById('mainActionBtn');
 
 // =====================
@@ -25,33 +29,22 @@ export function startGame() {
   locked = false;
   gameRunning = true;
 
-  // éteindre les highlights de la route précédente
+  // éteindre les highlights précédents
   window.dispatchEvent(
     new CustomEvent('standardRoute', { detail: { route: [] } })
   );
 
   // tirage du finish
- const IMPOSSIBLE_FINISHES = [169, 168, 166, 165, 163, 162];
+  target = getRandomTarget();
+  mainBtn.textContent = target;
 
-function getRandomTarget() {
-  const active = [...document.querySelectorAll('.levelBtn.active')];
+  stats.rounds++;
+  const diff = Number(document.getElementById('difficulty').value);
+  stats.difficulty[diff].rounds++;
 
-  if (active.length === 0) {
-    alert('Sélectionne au moins un niveau');
-    return 40;
-  }
+  saveStats(stats);
 
-  let target;
-
-  do {
-    const btn = active[Math.floor(Math.random() * active.length)];
-    const min = Number(btn.dataset.min);
-    const max = Number(btn.dataset.max);
-
-    target = min + Math.floor(Math.random() * (max - min + 1));
-  } while (IMPOSSIBLE_FINISHES.includes(target));
-
-  return target;
+  startTimer(diff, onTimeUp);
 }
 
 // =====================
@@ -73,18 +66,13 @@ export function resetGame() {
   locked = true;
   gameRunning = false;
 
-  // remise du bouton à l'état GO
   mainBtn.textContent = 'GO';
-
-  // nettoyage UI
   document.getElementById('standardRoute').textContent = '';
 
-  // reset TOTAL des stats (session + mémoire)
   resetStats();
   stats = loadStats();
   updateScore(stats.wins, stats.rounds);
 
-  // éteindre les highlights sur la cible
   window.dispatchEvent(
     new CustomEvent('standardRoute', { detail: { route: [] } })
   );
@@ -105,7 +93,7 @@ export function addDart(hit) {
 }
 
 // =====================
-// FIN DE TIMER
+// FIN DU TIMER
 // =====================
 function onTimeUp() {
   finishRound();
@@ -142,11 +130,9 @@ function finishRound() {
   saveStats(stats);
 
   const standardRoute = getStandardRoute();
-
   validateSlots(success, standardRoute);
   updateScore(stats.wins, stats.rounds);
 
-  // 🔥 allumer la route standard sur la cible
   window.dispatchEvent(
     new CustomEvent('standardRoute', {
       detail: { route: getCpuRoute(target) || [] }
@@ -167,7 +153,7 @@ function validateFinish() {
 }
 
 // =====================
-// TIRAGE DU SCORE
+// TIRAGE DU SCORE (AVEC FILTRE)
 // =====================
 function getRandomTarget() {
   const active = [...document.querySelectorAll('.levelBtn.active')];
@@ -177,11 +163,17 @@ function getRandomTarget() {
     return 40;
   }
 
-  const btn = active[Math.floor(Math.random() * active.length)];
-  const min = Number(btn.dataset.min);
-  const max = Number(btn.dataset.max);
+  let value;
 
-  return min + Math.floor(Math.random() * (max - min + 1));
+  do {
+    const btn = active[Math.floor(Math.random() * active.length)];
+    const min = Number(btn.dataset.min);
+    const max = Number(btn.dataset.max);
+
+    value = min + Math.floor(Math.random() * (max - min + 1));
+  } while (IMPOSSIBLE_FINISHES.includes(value));
+
+  return value;
 }
 
 // =====================
