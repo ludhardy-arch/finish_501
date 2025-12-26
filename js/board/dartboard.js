@@ -13,7 +13,6 @@ const COLORS = {
   wire: '#222'
 };
 
-// 🔵 BLEU NÉON FLASHY
 const HIGHLIGHT_BLUE = 'rgba(8,0,196,';
 
 const RINGS = {
@@ -39,16 +38,50 @@ export function drawBoard(canvas) {
   CANVAS = canvas;
   CTX = canvas.getContext('2d');
 
-  CX = canvas.width / 2;
-  CY = canvas.height / 2;
-  R  = canvas.width * 0.45;
+  resizeCanvas();
+  window.addEventListener('resize', resizeCanvas);
+
+  canvas.onclick = onClickBoard;
+}
+
+function resizeCanvas() {
+  const dpr = window.devicePixelRatio || 1;
+
+  // marge de sécurité (UI autour)
+  const margin = 24;
+
+  // taille max autorisée par l'écran
+  const maxSize = Math.min(
+    window.innerWidth,
+    window.innerHeight
+  ) - margin * 2;
+
+  // taille finale (limitée aussi à 700 desktop)
+  const cssSize = Math.min(maxSize, 700);
+
+  // taille affichée
+  CANVAS.style.width = `${cssSize}px`;
+  CANVAS.style.height = `${cssSize}px`;
+
+  // taille réelle du canvas (retina-safe)
+  CANVAS.width  = Math.round(cssSize * dpr);
+  CANVAS.height = Math.round(cssSize * dpr);
+
+  // normalisation du contexte
+  CTX.setTransform(dpr, 0, 0, dpr, 0, 0);
+
+  // coordonnées logiques
+  CX = cssSize / 2;
+  CY = cssSize / 2;
+  R  = cssSize * 0.45;
 
   SLICE = (Math.PI * 2) / 20;
   START = -Math.PI / 2 - SLICE / 2;
 
-  canvas.onclick = onClickBoard;
   render();
 }
+
+
 
 // =====================
 // ROUTE STANDARD (HIGHLIGHT)
@@ -88,7 +121,7 @@ function render() {
   circle(ctx, CX, CY, R * RINGS.bullInner, COLORS.red);
 
   // ===== SISAL + OMBRE =====
-  drawSisal(ctx, CX, CY, R * RINGS.doubleOuter);
+  drawSisal(ctx, CX, CY, R);
   drawInnerShadow(ctx, CX, CY, R);
 
   // ===== FILS =====
@@ -108,22 +141,37 @@ function render() {
     ctx.stroke();
   }
 
-  // ===== HIGHLIGHT ROUTE STANDARD =====
+  // ===== HIGHLIGHTS =====
   drawHighlights(ctx);
 
-  // ===== CHIFFRES =====
-  ctx.fillStyle = '#fff';
-  ctx.font = 'bold 26px system-ui';
-  ctx.textAlign = 'center';
-  ctx.textBaseline = 'middle';
+// ===== CHIFFRES =====
+ctx.fillStyle = '#fff';
 
-  for (let i = 0; i < 20; i++) {
-    const a = START + (i + 0.5) * SLICE;
-    const x = CX + Math.cos(a) * R * 1.06;
-    const y = CY + Math.sin(a) * R * 1.06;
-    ctx.fillText(ORDER[i], x, y);
-  }
+// rayon réel de la cible (double extérieur)
+const boardRadius = R;
+
+// zone dédiée aux chiffres (automatique, proportionnelle)
+const numberZone = boardRadius * 0.07;
+
+// rayon exact des chiffres
+const numberRadius = boardRadius + numberZone;
+
+// taille des chiffres directement liée au rayon
+const fontSize = boardRadius * 0.05;
+ctx.font = `bold ${fontSize}px system-ui`;
+
+ctx.textAlign = 'center';
+ctx.textBaseline = 'middle';
+
+for (let i = 0; i < 20; i++) {
+  const a = START + (i + 0.5) * SLICE;
+  const x = CX + Math.cos(a) * numberRadius;
+  const y = CY + Math.sin(a) * numberRadius;
+  ctx.fillText(ORDER[i], x, y);
 }
+
+} // 🔥 FIN DE render()
+
 
 // =====================
 // HIGHLIGHTS BLEU NÉON
@@ -133,7 +181,6 @@ function drawHighlights(ctx) {
 
   ctx.save();
   ctx.globalCompositeOperation = 'source-over';
-
 
   HIGHLIGHTS.forEach((hit, idx) => {
     const alpha = idx === 0 ? 0.9 : idx === 1 ? 0.7 : 0.55;
@@ -191,22 +238,19 @@ function drawHighlights(ctx) {
 // GLOW HELPERS
 // =====================
 function glowSector(ctx, cx, cy, rIn, rOut, a0, a1, alpha) {
-  // construire la forme
   ctx.save();
   ctx.beginPath();
   ctx.arc(cx, cy, rOut, a0, a1);
   ctx.arc(cx, cy, rIn, a1, a0, true);
   ctx.closePath();
 
-  // 1) remplissage UNIFORME dans la zone (clip)
   ctx.save();
   ctx.clip();
-  ctx.globalAlpha = 0.85 * alpha;         // ajuste si tu veux +/-
-  ctx.fillStyle = `${HIGHLIGHT_BLUE}1)`;  // bleu plein
+  ctx.globalAlpha = 0.85 * alpha;
+  ctx.fillStyle = `${HIGHLIGHT_BLUE}1)`;
   ctx.fillRect(0, 0, CANVAS.width, CANVAS.height);
   ctx.restore();
 
-  // 2) contour néon (léger) — on laisse un glow, mais contrôlé
   ctx.globalAlpha = alpha;
   ctx.shadowBlur = 22;
   ctx.shadowColor = `${HIGHLIGHT_BLUE}1)`;
@@ -216,8 +260,6 @@ function glowSector(ctx, cx, cy, rIn, rOut, a0, a1, alpha) {
 
   ctx.restore();
 }
-
-
 
 function glowRing(ctx, cx, cy, rIn, rOut, alpha) {
   ctx.save();
@@ -226,7 +268,6 @@ function glowRing(ctx, cx, cy, rIn, rOut, alpha) {
   ctx.arc(cx, cy, rIn, Math.PI * 2, 0, true);
   ctx.closePath();
 
-  // remplissage uniforme
   ctx.save();
   ctx.clip();
   ctx.globalAlpha = 0.85 * alpha;
@@ -234,7 +275,6 @@ function glowRing(ctx, cx, cy, rIn, rOut, alpha) {
   ctx.fillRect(0, 0, CANVAS.width, CANVAS.height);
   ctx.restore();
 
-  // contour néon
   ctx.globalAlpha = alpha;
   ctx.shadowBlur = 22;
   ctx.shadowColor = `${HIGHLIGHT_BLUE}1)`;
@@ -245,15 +285,12 @@ function glowRing(ctx, cx, cy, rIn, rOut, alpha) {
   ctx.restore();
 }
 
-
-
 function glowCircle(ctx, cx, cy, r, alpha) {
   ctx.save();
   ctx.beginPath();
   ctx.arc(cx, cy, r, 0, Math.PI * 2);
   ctx.closePath();
 
-  // remplissage uniforme
   ctx.save();
   ctx.clip();
   ctx.globalAlpha = 0.9 * alpha;
@@ -261,7 +298,6 @@ function glowCircle(ctx, cx, cy, r, alpha) {
   ctx.fillRect(0, 0, CANVAS.width, CANVAS.height);
   ctx.restore();
 
-  // contour néon
   ctx.globalAlpha = alpha;
   ctx.shadowBlur = 30;
   ctx.shadowColor = `${HIGHLIGHT_BLUE}1)`;
@@ -271,8 +307,6 @@ function glowCircle(ctx, cx, cy, r, alpha) {
 
   ctx.restore();
 }
-
-
 
 // =====================
 // CLIC SUR LA CIBLE
