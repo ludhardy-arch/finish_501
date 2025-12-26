@@ -10,7 +10,7 @@ const COLORS = {
   white: '#f2f2f2',
   red: '#b61f2a',
   green: '#1aa35e',
-  wire: '#b0b0b0'
+  wire: '#C2C3C4'
 };
 
 const HIGHLIGHT_BLUE = 'rgba(8,0,196,';
