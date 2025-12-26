@@ -1,4 +1,6 @@
-/* BARRE ACTION */
+/* =====================
+   BARRE ACTION
+   ===================== */
 .actionBar {
   display: flex;
   gap: 20px;
@@ -14,23 +16,15 @@
   box-shadow: 0 0 25px rgba(255,51,85,0.9);
 }
 
-/* SELECTION NIVEAUX */
-.levelSelector {
-  margin-top: 20px;
-  text-align: center;
-}
-
-.levelTitle {
-  font-weight: 800;
-  margin-bottom: 8px;
-  color: #aaa;
-}
-
+/* =====================
+   SELECTION NIVEAUX
+   ===================== */
 .levels {
   display: flex;
   gap: 10px;
   justify-content: center;
   flex-wrap: wrap;
+  margin-top: 20px;
 }
 
 .levelBtn {
@@ -48,6 +42,23 @@
   border-color: #00ff88;
   box-shadow: 0 0 12px rgba(0,255,136,0.6);
 }
+
+/* =====================
+   FINISH A TERMINER
+   ===================== */
+#targetScore {
+  font-size: 44px;
+  font-weight: 900;
+  margin: 14px 0 20px;
+  color: #ffffff;
+  text-shadow:
+    0 0 14px #0396FF,
+    0 0 30px rgba(0,255,200,0.6);
+}
+
+/* =====================
+   ROUTE STANDARD
+   ===================== */
 #standardRoute {
   margin-top: 14px;
   padding: 10px 18px;
@@ -68,13 +79,11 @@
   transition: opacity 0.25s ease, transform 0.25s ease;
 }
 
-/* visible uniquement quand il y a du texte */
 #standardRoute:not(:empty) {
   opacity: 1;
   transform: translateY(0);
 }
 
-/* petit label automatique */
 #standardRoute::before {
   content: 'ROUTE STANDARD';
   display: block;
@@ -84,13 +93,25 @@
   margin-bottom: 6px;
   color: #00ffc8;
 }
+
+/* =====================
+   ZONE SLOTS + DIFFICULTÉ
+   ===================== */
+.slotsZone {
+  position: relative;
+  display: flex;
+  justify-content: center; /* 🔥 centre les SLOTS */
+  align-items: center;
+  margin-top: 18px;
+}
+
+/* SLOTS CENTRÉS */
 #arrowSlots {
   display: flex;
   gap: 20px;
-  justify-content: center;
-  margin-top: 15px;
 }
 
+/* CASE */
 .slot {
   width: 90px;
   height: 90px;
@@ -112,36 +133,35 @@
   border-color: #ff3355;
   box-shadow: 0 0 18px #ff3355;
 }
-.slotsRow {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 20px;
-  margin-top: 15px;
+
+/* =====================
+   SELECT DIFFICULTÉ (À GAUCHE)
+   ===================== */
+#difficultyWrapper {
+  position: absolute;
+  right: 50%;                  /* se cale sur le centre */
+  transform: translateX(-190px);
 }
 
-/* FINISH A TERMINER */
-#targetScore {
-  font-size: 44px;
+#difficulty {
+  height: 48px;
+  background: radial-gradient(circle at top, #202020, #050505);
+  color: #002FFF;
+  border: 2px solid #4CFCF9;
+  border-radius: 18px;
+  padding: 14px 22px;
+  font-size: 18px;
   font-weight: 900;
-  margin: 14px 0 20px;
-  color: #ffffff;
-  text-shadow:
-    0 0 14px #0396FF,
-    0 0 30px rgba(0,255,200,0.6);
-}
-/* GO + VALIDER même taille */
-.actionBar #goBtn,
-.actionBar #validateBtn {
-  min-width: 170px;
-  height: 52px;
-  padding: 0 24px;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
+  text-transform: uppercase;
+  box-shadow:
+    inset 0 4px 8px rgba(255,255,255,0.15),
+    inset 0 -6px 5px rgba(0,0,0,0.7),
+    0 0 18px rgba(0,255,136,0.6);
 }
 
-/* RESET couleur différente */
+/* =====================
+   BOUTONS ACTIONS
+   ===================== */
 .actionBar #resetBtn {
   background: #10163a;
   color: #ffffff;
@@ -149,17 +169,16 @@
   box-shadow: 0 0 12px rgba(255,255,255,0.15);
 }
 
-/* BOUTON RETOUR */
 .actionBar #undoBtn {
   background: #0a1e40;
   color: #ffffff;
   border: 2px solid #0090ff;
   box-shadow: 0 0 16px rgba(0,144,255,0.7);
 }
-/* =====================
-   BOUTON PRINCIPAL ROUGE
-   ===================== */
 
+/* =====================
+   BOUTON PRINCIPAL GO
+   ===================== */
 #mainActionWrapper {
   position: relative;
   width: 50px;
@@ -168,8 +187,8 @@
 #mainActionBtn {
   position: absolute;
   right: -340px;
-  bottom: -100px; /* aligné vers le 15 */
-  
+  bottom: -100px;
+
   width: 180px;
   height: 180px;
   border-radius: 50%;
@@ -182,67 +201,21 @@
   cursor: pointer;
   border: none;
 
-  background: radial-gradient(
-    circle at top,
-    #ff6b6b,
-    #d40000 70%
-  );
-
+  background: radial-gradient(circle at top, #ff6b6b, #d40000 70%);
   box-shadow:
     inset 0 6px 10px rgba(255,255,255,0.35),
     inset 0 -10px 16px rgba(0,0,0,0.6),
     0 14px 80px rgba(255,0,0,0.6);
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
+  padding: 0;
 
   transition: transform 0.08s ease, box-shadow 0.08s ease;
 }
 
 #mainActionBtn:active {
   transform: translateY(4px);
-  box-shadow:
-    inset 0 6px 10px rgba(255,255,255,0.35),
-    inset 0 -10px 16px rgba(0,0,0,0.6);
 }
-
-/* état VALIDER (texte différent mais même bouton) */
-#mainActionBtn:active {
-  transform: translateY(4px);
-  box-shadow:
-    inset 0 4px 6px rgba(255,255,255,0.25),
-    inset 0 -6px 10px rgba(0,0,0,0.6);
-}
-#mainActionBtn {
-  /* … */
-
-  display: flex;
-  align-items: center;
-  justify-content: center;
-
-  line-height: 1;
-  padding: 0;
-}
-#difficultyWrapper {
-  position: absolute;
-  left: 790px;
-  top: 93%;
-  transform: translateY(-50%);
-}
-#difficulty {
-  background: radial-gradient(circle at top, #202020, #050505);
-  color: #002FFF;
-
-  border: 2px solid #4CFCF9;
-  border-radius: 18px;
-
-  padding: 14px 22px;
-  font-size: 18px;
-  font-weight: 900;
-  text-transform: uppercase;
-
-  box-shadow:
-    inset 0 4px 8px rgba(255,255,255,0.15),
-    inset 0 -6px 5px rgba(0,0,0,0.7),
-    0 0 18px rgba(0,255,136,0.6);
-}
-
-
-
