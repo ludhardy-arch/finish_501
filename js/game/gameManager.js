@@ -31,21 +31,29 @@ export function startGame() {
   );
 
   // tirage du finish
-  target = getRandomTarget();
+ const IMPOSSIBLE_FINISHES = [169, 168, 166, 165, 163, 162];
 
-  // 🔴 affichage du finish DANS le bouton
-  mainBtn.textContent = target;
+function getRandomTarget() {
+  const active = [...document.querySelectorAll('.levelBtn.active')];
 
-  // stats
-  stats.rounds++;
-  const diff = Number(document.getElementById('difficulty').value);
-  stats.difficulty[diff].rounds++;
+  if (active.length === 0) {
+    alert('Sélectionne au moins un niveau');
+    return 40;
+  }
 
-  saveStats(stats);
+  let target;
 
-  // timer
-  startTimer(diff, onTimeUp);
+  do {
+    const btn = active[Math.floor(Math.random() * active.length)];
+    const min = Number(btn.dataset.min);
+    const max = Number(btn.dataset.max);
+
+    target = min + Math.floor(Math.random() * (max - min + 1));
+  } while (IMPOSSIBLE_FINISHES.includes(target));
+
+  return target;
 }
+
 
 // =====================
 // VALIDATION MANUELLE
