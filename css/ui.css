@@ -214,8 +214,8 @@
 }
 #difficultyWrapper {
   position: absolute;
-  left: 590px;
-  top: 93%;
+  left: 290px;
+  top: 123%;
   transform: translateY(-50%);
 }
 #difficulty {
