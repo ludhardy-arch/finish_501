@@ -219,8 +219,4 @@
     inset 0 -6px 5px rgba(0,0,0,0.7),
     0 0 18px rgba(0,255,136,0.6);
 }
-#difficultyWrapper {
-  display: flex;
-  justify-content: center;
-  margin-top: 22px;   /* 🔥 ICI l’espace réel */
-}
+
