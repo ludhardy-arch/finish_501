@@ -84,14 +84,15 @@
   margin-bottom: 6px;
   color: #00ffc8;
 }
+/* Centrage propre des cases sous la cible */
 #arrowSlots {
+  width: 700px;              /* même largeur que le canvas */
+  margin: 15px auto 0;
   display: flex;
-  gap: 20px;
   justify-content: center;
-  margin-top: 15px;
-
-  position: relative; /* 🔥 TRÈS IMPORTANT */
+  gap: 20px;
 }
+
 
 .slot {
   width: 90px;
