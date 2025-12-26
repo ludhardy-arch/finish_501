@@ -1,4 +1,4 @@
-import { drawBoard, setRouteHighlights } from './board/dartboard.js';
+import { drawBoard, setRouteHighlights } from './board/dartboard.js'; 
 import {
   startGame,
   resetGame,
@@ -11,6 +11,15 @@ import {
 // =====================
 const canvas = document.getElementById('dartboard');
 drawBoard(canvas);
+
+// =====================
+// SELECTION DES NIVEAUX (🔥 FIX PRINCIPAL)
+// =====================
+document.querySelectorAll('.levelBtn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    btn.classList.toggle('active');
+  });
+});
 
 // =====================
 // BOUTON PRINCIPAL
