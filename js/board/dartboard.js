@@ -13,6 +13,7 @@ const COLORS = {
   wire: '#222'
 };
 
+// 🔵 BLEU NÉON FLASHY
 const HIGHLIGHT_BLUE = 'rgba(8,0,196,';
 
 const RINGS = {
@@ -45,7 +46,7 @@ export function drawBoard(canvas) {
   SLICE = (Math.PI * 2) / 20;
   START = -Math.PI / 2 - SLICE / 2;
 
-  canvas.addEventListener('click', onClickBoard);
+  canvas.onclick = onClickBoard;
   render();
 }
 
@@ -86,16 +87,13 @@ function render() {
   circle(ctx, CX, CY, R * RINGS.bullOuter, COLORS.green);
   circle(ctx, CX, CY, R * RINGS.bullInner, COLORS.red);
 
-  // ===== SISAL (VERSION ORIGINALE) =====
+  // ===== SISAL + OMBRE =====
   drawSisal(ctx, CX, CY, R * RINGS.doubleOuter);
-
-  // ===== OMBRE =====
   drawInnerShadow(ctx, CX, CY, R);
 
   // ===== FILS =====
   ctx.strokeStyle = COLORS.wire;
   ctx.lineWidth = 2;
-
   for (let i = 0; i < 20; i++) {
     const a = START + i * SLICE;
     ctx.beginPath();
@@ -110,6 +108,7 @@ function render() {
     ctx.stroke();
   }
 
+  // ===== HIGHLIGHT ROUTE STANDARD =====
   drawHighlights(ctx);
 
   // ===== CHIFFRES =====
@@ -120,13 +119,160 @@ function render() {
 
   for (let i = 0; i < 20; i++) {
     const a = START + (i + 0.5) * SLICE;
-    ctx.fillText(
-      ORDER[i],
-      CX + Math.cos(a) * R * 1.06,
-      CY + Math.sin(a) * R * 1.06
-    );
+    const x = CX + Math.cos(a) * R * 1.06;
+    const y = CY + Math.sin(a) * R * 1.06;
+    ctx.fillText(ORDER[i], x, y);
   }
 }
+
+// =====================
+// HIGHLIGHTS BLEU NÉON
+// =====================
+function drawHighlights(ctx) {
+  if (!HIGHLIGHTS.length) return;
+
+  ctx.save();
+  ctx.globalCompositeOperation = 'source-over';
+
+
+  HIGHLIGHTS.forEach((hit, idx) => {
+    const alpha = idx === 0 ? 0.9 : idx === 1 ? 0.7 : 0.55;
+
+    if (hit === 'Bull') {
+      glowCircle(ctx, CX, CY, R * RINGS.bullInner, alpha);
+      return;
+    }
+
+    if (hit === '25') {
+      glowRing(ctx, CX, CY,
+        R * RINGS.bullInner,
+        R * RINGS.bullOuter,
+        alpha
+      );
+      return;
+    }
+
+    const m = /^([SDT])(\d{1,2})$/.exec(hit);
+    if (!m) return;
+
+    const type = m[1];
+    const num = Number(m[2]);
+    const sector = ORDER.indexOf(num);
+    if (sector === -1) return;
+
+    const a0 = START + sector * SLICE;
+    const a1 = a0 + SLICE;
+
+    if (type === 'D') {
+      glowSector(ctx, CX, CY,
+        R * RINGS.doubleInner,
+        R * RINGS.doubleOuter,
+        a0, a1, alpha
+      );
+    } else if (type === 'T') {
+      glowSector(ctx, CX, CY,
+        R * RINGS.tripleInner,
+        R * RINGS.tripleOuter,
+        a0, a1, alpha
+      );
+    } else {
+      glowSector(ctx, CX, CY,
+        R * RINGS.doubleInner,
+        R * RINGS.tripleOuter,
+        a0, a1, alpha
+      );
+    }
+  });
+
+  ctx.restore();
+}
+
+// =====================
+// GLOW HELPERS
+// =====================
+function glowSector(ctx, cx, cy, rIn, rOut, a0, a1, alpha) {
+  // construire la forme
+  ctx.save();
+  ctx.beginPath();
+  ctx.arc(cx, cy, rOut, a0, a1);
+  ctx.arc(cx, cy, rIn, a1, a0, true);
+  ctx.closePath();
+
+  // 1) remplissage UNIFORME dans la zone (clip)
+  ctx.save();
+  ctx.clip();
+  ctx.globalAlpha = 0.85 * alpha;         // ajuste si tu veux +/-
+  ctx.fillStyle = `${HIGHLIGHT_BLUE}1)`;  // bleu plein
+  ctx.fillRect(0, 0, CANVAS.width, CANVAS.height);
+  ctx.restore();
+
+  // 2) contour néon (léger) — on laisse un glow, mais contrôlé
+  ctx.globalAlpha = alpha;
+  ctx.shadowBlur = 22;
+  ctx.shadowColor = `${HIGHLIGHT_BLUE}1)`;
+  ctx.lineWidth = 3;
+  ctx.strokeStyle = `${HIGHLIGHT_BLUE}1)`;
+  ctx.stroke();
+
+  ctx.restore();
+}
+
+
+
+function glowRing(ctx, cx, cy, rIn, rOut, alpha) {
+  ctx.save();
+  ctx.beginPath();
+  ctx.arc(cx, cy, rOut, 0, Math.PI * 2);
+  ctx.arc(cx, cy, rIn, Math.PI * 2, 0, true);
+  ctx.closePath();
+
+  // remplissage uniforme
+  ctx.save();
+  ctx.clip();
+  ctx.globalAlpha = 0.85 * alpha;
+  ctx.fillStyle = `${HIGHLIGHT_BLUE}1)`;
+  ctx.fillRect(0, 0, CANVAS.width, CANVAS.height);
+  ctx.restore();
+
+  // contour néon
+  ctx.globalAlpha = alpha;
+  ctx.shadowBlur = 22;
+  ctx.shadowColor = `${HIGHLIGHT_BLUE}1)`;
+  ctx.lineWidth = 3;
+  ctx.strokeStyle = `${HIGHLIGHT_BLUE}1)`;
+  ctx.stroke();
+
+  ctx.restore();
+}
+
+
+
+function glowCircle(ctx, cx, cy, r, alpha) {
+  ctx.save();
+  ctx.beginPath();
+  ctx.arc(cx, cy, r, 0, Math.PI * 2);
+  ctx.closePath();
+
+  // remplissage uniforme
+  ctx.save();
+  ctx.clip();
+  ctx.globalAlpha = 0.9 * alpha;
+  ctx.fillStyle = `${HIGHLIGHT_BLUE}1)`;
+  ctx.fillRect(0, 0, CANVAS.width, CANVAS.height);
+  ctx.restore();
+
+  // contour néon
+  ctx.globalAlpha = alpha;
+  ctx.shadowBlur = 30;
+  ctx.shadowColor = `${HIGHLIGHT_BLUE}1)`;
+  ctx.lineWidth = 3;
+  ctx.strokeStyle = `${HIGHLIGHT_BLUE}1)`;
+  ctx.stroke();
+
+  ctx.restore();
+}
+
+
 
 // =====================
 // CLIC SUR LA CIBLE
@@ -142,7 +288,7 @@ function onClickBoard(e) {
   const angle =
     (Math.atan2(y, x) + Math.PI * 2 + Math.PI / 2 + SLICE / 2) % (Math.PI * 2);
 
-  const sector = Math.min(19, Math.floor(angle / SLICE));
+  const sector = Math.floor(angle / SLICE);
   const num = ORDER[sector];
 
   let hit = { label: `S${num}`, value: num, isDouble: false };
@@ -160,7 +306,7 @@ function onClickBoard(e) {
 }
 
 // =====================
-// HELPERS
+// BASE HELPERS
 // =====================
 function drawSector(ctx, cx, cy, rIn, rOut, a0, a1, color) {
   ctx.beginPath();
