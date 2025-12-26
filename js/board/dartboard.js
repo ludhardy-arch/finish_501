@@ -31,9 +31,6 @@ let CANVAS, CTX;
 let CX, CY, R, SLICE, START;
 let HIGHLIGHTS = [];
 
-// sisal pré-rendu
-let SISAL_CANVAS = null;
-
 // =====================
 // INIT
 // =====================
@@ -47,8 +44,6 @@ export function drawBoard(canvas) {
 
   SLICE = (Math.PI * 2) / 20;
   START = -Math.PI / 2 - SLICE / 2;
-
-  buildSisal();
 
   canvas.addEventListener('click', onClickBoard);
   render();
@@ -91,8 +86,8 @@ function render() {
   circle(ctx, CX, CY, R * RINGS.bullOuter, COLORS.green);
   circle(ctx, CX, CY, R * RINGS.bullInner, COLORS.red);
 
-  // ===== SISAL (pré-rendu) =====
-  ctx.drawImage(SISAL_CANVAS, 0, 0);
+  // ===== SISAL (VERSION ORIGINALE) =====
+  drawSisal(ctx, CX, CY, R * RINGS.doubleOuter);
 
   // ===== OMBRE =====
   drawInnerShadow(ctx, CX, CY, R);
@@ -129,32 +124,6 @@ function render() {
       ORDER[i],
       CX + Math.cos(a) * R * 1.06,
       CY + Math.sin(a) * R * 1.06
-    );
-  }
-}
-
-// =====================
-// SISAL PRÉ-RENDRE
-// =====================
-function buildSisal() {
-  SISAL_CANVAS = document.createElement('canvas');
-  SISAL_CANVAS.width = CANVAS.width;
-  SISAL_CANVAS.height = CANVAS.height;
-
-  const ctx = SISAL_CANVAS.getContext('2d');
-  ctx.globalAlpha = 0.08;
-
-  const r = R * RINGS.doubleOuter;
-  const density = 0.15;
-
-  for (let i = 0; i < r * r * density; i++) {
-    const a = Math.random() * Math.PI * 2;
-    const rr = Math.random() * r;
-    ctx.fillStyle = Math.random() > 0.5 ? '#000' : '#fff';
-    ctx.fillRect(
-      CX + Math.cos(a) * rr,
-      CY + Math.sin(a) * rr,
-      1, 1
     );
   }
 }
@@ -207,6 +176,19 @@ function circle(ctx, cx, cy, r, color) {
   ctx.arc(cx, cy, r, 0, Math.PI * 2);
   ctx.fillStyle = color;
   ctx.fill();
+}
+
+function drawSisal(ctx, cx, cy, r) {
+  ctx.save();
+  ctx.globalAlpha = 0.08;
+  const density = 0.15;
+  for (let i = 0; i < r * r * density; i++) {
+    const a = Math.random() * Math.PI * 2;
+    const rr = Math.random() * r;
+    ctx.fillStyle = Math.random() > 0.5 ? '#000' : '#fff';
+    ctx.fillRect(cx + Math.cos(a) * rr, cy + Math.sin(a) * rr, 1, 1);
+  }
+  ctx.restore();
 }
 
 function drawInnerShadow(ctx, cx, cy, r) {
